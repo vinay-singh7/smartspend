@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+body {
+  @apply min-h-screen bg-slate-100 bg-grid [background-size:20px_20px] text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100;
+}
+
+.glass-card {
+  @apply rounded-2xl border border-white/40 bg-white/70 p-4 shadow-soft backdrop-blur-md dark:border-slate-700 dark:bg-slate-900/70;
+}
+
+.input {
+  @apply w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm outline-none ring-cyan-500 transition focus:ring-2 dark:border-slate-700 dark:bg-slate-900;
+}
+
+.btn {
+  @apply rounded-xl px-4 py-2 text-sm font-medium transition;
+}
