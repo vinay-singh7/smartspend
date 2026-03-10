@@ -11,13 +11,13 @@ import { StatCard } from "@/components/dashboard/StatCard";
 import { CategoryPieChart, MonthlyBarChart } from "@/components/dashboard/Charts";
 import { TransactionForm } from "@/components/transactions/TransactionForm";
 import { TransactionTable } from "@/components/transactions/TransactionTable";
-import { TransactionFilters } from "@/components/transactions/TransactionFilters";
 import { BudgetCard } from "@/components/dashboard/BudgetCard";
-import { ExportActions } from "@/components/dashboard/ExportActions";
 import { InsightsCard } from "@/components/dashboard/InsightsCard";
 import { QuickStats } from "@/components/dashboard/QuickStats";
 import { AIAssistant } from "@/components/ai/AIAssistant";
 import { Transaction } from "@/lib/types";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -59,12 +59,11 @@ export default function DashboardPage() {
     totalIncome: 0,
     totalExpense: 0,
   });
-  const [filters, setFilters] = useState(initialFilters);
 
   const fetchDashboard = async () => {
     const [dashboardRes, txRes, analyticsRes] = await Promise.all([
       api.get("/dashboard"),
-      api.get("/transactions", { params: filters }),
+      api.get("/transactions", { params: { search: "", from: "", to: "", category: "", type: "" } }), // Limit this on backend later, but for now fetch all and slice
       api.get("/analytics"),
     ]);
     setStats(dashboardRes.data);
@@ -116,7 +115,6 @@ export default function DashboardPage() {
         >
           <div className="space-y-4">
             <TransactionForm onCreated={fetchDashboard} preferredCurrency={user?.preferredCurrency} />
-            <TransactionFilters filters={filters} onChange={setFilters} onApply={fetchDashboard} />
             <BudgetCard month={currentMonth} currency={user?.preferredCurrency || "USD"} />
             <InsightsCard
               transactions={transactions}
@@ -125,7 +123,6 @@ export default function DashboardPage() {
               totalExpense={analytics.totalExpense}
               currency={user?.preferredCurrency}
             />
-            <ExportActions month={currentMonth} />
           </div>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-1">
             <CategoryPieChart data={categoryData} />
@@ -138,10 +135,17 @@ export default function DashboardPage() {
         </motion.div>
 
         <motion.div variants={itemVariants} initial="hidden" animate="show">
+          <div className="mb-2 flex items-center justify-between">
+            <h3 className="text-sm font-semibold">Recent Transactions</h3>
+            <Link href="/transactions" className="flex items-center gap-1 text-sm text-cyan-600 hover:text-cyan-700 dark:text-cyan-400 dark:hover:text-cyan-300">
+              View all <ArrowRight size={14} />
+            </Link>
+          </div>
           <TransactionTable
-            transactions={transactions}
+            transactions={transactions.slice(0, 5)}
             onRefresh={fetchDashboard}
             preferredCurrency={user?.preferredCurrency}
+            hideTitle
           />
         </motion.div>
       </main>

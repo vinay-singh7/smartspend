@@ -4,11 +4,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
 import { motion } from "framer-motion";
-import { BarChart3, LayoutDashboard } from "lucide-react";
+import { BarChart3, LayoutDashboard, ListOrdered, Settings, Target } from "lucide-react";
 
 const items = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/analytics", label: "Analytics", icon: BarChart3 },
+  { href: "/dashboard", label: "Dash", icon: LayoutDashboard },
+  { href: "/transactions", label: "Txns", icon: ListOrdered },
+  { href: "/budgets", label: "Budgets", icon: Target },
+  { href: "/analytics", label: "Stats", icon: BarChart3 },
+  { href: "/settings", label: "Settings", icon: Settings },
 ];
 
 export function BottomNav() {

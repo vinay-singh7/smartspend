@@ -13,9 +13,10 @@ type Props = {
   transactions: Transaction[];
   onRefresh: () => Promise<void>;
   preferredCurrency?: string;
+  hideTitle?: boolean;
 };
 
-export function TransactionTable({ transactions, onRefresh, preferredCurrency }: Props) {
+export function TransactionTable({ transactions, onRefresh, preferredCurrency, hideTitle }: Props) {
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
 
   const onDelete = async (id: string) => {
@@ -38,7 +39,7 @@ export function TransactionTable({ transactions, onRefresh, preferredCurrency }:
       </AnimatePresence>
 
       <div className="glass-card overflow-hidden">
-        <h3 className="mb-3 text-sm font-semibold">Recent Transactions</h3>
+        {!hideTitle && <h3 className="mb-3 text-sm font-semibold">Recent Transactions</h3>}
         <div className="overflow-x-auto">
           <table className="w-full min-w-[700px] text-sm">
             <thead>

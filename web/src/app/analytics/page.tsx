@@ -5,9 +5,12 @@ import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAx
 import { ProtectedRoute } from "@/components/layout/ProtectedRoute";
 import { TopBar } from "@/components/layout/TopBar";
 import { BottomNav } from "@/components/layout/BottomNav";
+import { AIAssistant } from "@/components/ai/AIAssistant";
+import { InsightsCard } from "@/components/dashboard/InsightsCard";
 import { api } from "@/lib/api";
 import { formatCurrency } from "@/lib/format";
 import { useAuth } from "@/contexts/AuthContext";
+import { Transaction } from "@/lib/types";
 
 type AnalyticsPayload = {
   totalIncome: number;
@@ -21,9 +24,16 @@ type AnalyticsPayload = {
 export default function AnalyticsPage() {
   const { user } = useAuth();
   const [analytics, setAnalytics] = useState<AnalyticsPayload | null>(null);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   useEffect(() => {
-    api.get("/analytics").then((response) => setAnalytics(response.data));
+    Promise.all([
+      api.get("/analytics"),
+      api.get("/transactions")
+    ]).then(([analyticsRes, txRes]) => {
+      setAnalytics(analyticsRes.data);
+      setTransactions(txRes.data.transactions);
+    });
   }, []);
 
   const categoryRows = useMemo(
@@ -53,6 +63,13 @@ export default function AnalyticsPage() {
             <p className="text-xs text-slate-500">Highest Spending Category</p>
             <p className="mt-2 text-lg font-semibold">{analytics?.highestSpendingCategory || "N/A"}</p>
           </div>
+          <InsightsCard
+            transactions={transactions}
+            categoryBreakdown={analytics?.categoryBreakdown || {}}
+            totalIncome={analytics?.totalIncome || 0}
+            totalExpense={analytics?.totalExpense || 0}
+            currency={user?.preferredCurrency}
+          />
         </div>
 
         <div className="grid gap-4 lg:grid-cols-2">
@@ -85,6 +102,7 @@ export default function AnalyticsPage() {
         </div>
       </main>
       <BottomNav />
+      <AIAssistant />
     </ProtectedRoute>
   );
 }

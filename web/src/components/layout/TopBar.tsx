@@ -13,24 +13,15 @@ import { api } from "@/lib/api";
 
 const links = [
   { href: "/dashboard", label: "Dashboard" },
+  { href: "/transactions", label: "Transactions" },
+  { href: "/budgets", label: "Budgets" },
   { href: "/analytics", label: "Analytics" },
+  { href: "/settings", label: "Settings" },
 ];
 
 export function TopBar() {
-  const { theme, toggleTheme } = useTheme();
-  const { user, logout, refreshUser } = useAuth();
+  const { user } = useAuth();
   const pathname = usePathname();
-  const router = useRouter();
-
-  const handleCurrencyChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-    try {
-      await api.patch("/auth/currency", { preferredCurrency: e.target.value });
-      await refreshUser();
-      toast.success(`Currency changed to ${e.target.value}`);
-    } catch {
-      toast.error("Failed to update currency");
-    }
-  };
 
   return (
     <header className="sticky top-0 z-20 border-b border-slate-200/70 bg-white/70 backdrop-blur-md dark:border-slate-800 dark:bg-slate-950/70">
@@ -60,39 +51,14 @@ export function TopBar() {
             );
           })}
         </nav>
-        <div className="flex items-center gap-2">
-          <select
-            value={user?.preferredCurrency || "USD"}
-            onChange={handleCurrencyChange}
-            className="btn bg-slate-200/80 text-sm dark:bg-slate-800"
-          >
-            {CURRENCIES.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-          <button
-            type="button"
-            onClick={toggleTheme}
-            className="btn bg-slate-200/80 transition-transform hover:scale-105 active:scale-95 dark:bg-slate-800"
-            aria-label="Toggle theme"
-          >
-            {theme === "light" ? <Moon size={16} /> : <Sun size={16} />}
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              logout();
-              router.push("/auth");
-            }}
-            className="btn bg-rose-500 text-white transition-transform hover:scale-105 active:scale-95 hover:bg-rose-600"
-          >
-            Logout
-          </button>
+        <div className="flex items-center gap-3">
+          {user && (
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-cyan-100 font-bold text-cyan-700 dark:bg-cyan-900/40 dark:text-cyan-400">
+              {user.name.charAt(0).toUpperCase()}
+            </div>
+          )}
         </div>
       </div>
     </header>
   );
 }
-
