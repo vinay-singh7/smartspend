@@ -14,6 +14,9 @@ import { TransactionTable } from "@/components/transactions/TransactionTable";
 import { TransactionFilters } from "@/components/transactions/TransactionFilters";
 import { BudgetCard } from "@/components/dashboard/BudgetCard";
 import { ExportActions } from "@/components/dashboard/ExportActions";
+import { InsightsCard } from "@/components/dashboard/InsightsCard";
+import { QuickStats } from "@/components/dashboard/QuickStats";
+import { AIAssistant } from "@/components/ai/AIAssistant";
 import { Transaction } from "@/lib/types";
 
 type DashboardStats = {
@@ -26,6 +29,8 @@ type DashboardStats = {
 type Analytics = {
   monthly: { month: string; expense: number; income: number }[];
   categoryBreakdown: Record<string, number>;
+  totalIncome: number;
+  totalExpense: number;
 };
 
 const initialFilters = { search: "", from: "", to: "", category: "", type: "" };
@@ -34,7 +39,12 @@ export default function DashboardPage() {
   const { user } = useAuth();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [analytics, setAnalytics] = useState<Analytics>({ monthly: [], categoryBreakdown: {} });
+  const [analytics, setAnalytics] = useState<Analytics>({
+    monthly: [],
+    categoryBreakdown: {},
+    totalIncome: 0,
+    totalExpense: 0,
+  });
   const [filters, setFilters] = useState(initialFilters);
 
   const fetchDashboard = async () => {
@@ -87,6 +97,13 @@ export default function DashboardPage() {
             <TransactionForm onCreated={fetchDashboard} preferredCurrency={user?.preferredCurrency} />
             <TransactionFilters filters={filters} onChange={setFilters} onApply={fetchDashboard} />
             <BudgetCard month={currentMonth} currency={user?.preferredCurrency || "USD"} />
+            <InsightsCard
+              transactions={transactions}
+              categoryBreakdown={analytics.categoryBreakdown}
+              totalIncome={analytics.totalIncome}
+              totalExpense={analytics.totalExpense}
+              currency={user?.preferredCurrency}
+            />
             <ExportActions month={currentMonth} />
           </div>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-1">
@@ -95,9 +112,16 @@ export default function DashboardPage() {
           </div>
         </section>
 
-        <TransactionTable transactions={transactions} onRefresh={fetchDashboard} />
+        <QuickStats transactions={transactions} currency={user?.preferredCurrency} />
+
+        <TransactionTable
+          transactions={transactions}
+          onRefresh={fetchDashboard}
+          preferredCurrency={user?.preferredCurrency}
+        />
       </main>
       <BottomNav />
+      <AIAssistant />
     </ProtectedRoute>
   );
 }

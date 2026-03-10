@@ -10,6 +10,7 @@
     "lint": "echo \"No lint configured\""
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "csv-stringify": "^6.5.2",
@@ -38,4 +39,3 @@
     "typescript": "^5.7.2"
   }
 }
-

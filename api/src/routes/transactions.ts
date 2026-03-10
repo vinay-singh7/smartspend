@@ -20,12 +20,17 @@ const transactionSchema = z.object({
   recurringInterval: z.enum(RECURRING_INTERVALS).optional(),
 });
 
+const emptyToUndefined = z
+  .string()
+  .optional()
+  .transform((v) => (v === "" ? undefined : v));
+
 const filterSchema = z.object({
-  from: z.string().optional(),
-  to: z.string().optional(),
-  category: z.enum(CATEGORIES).optional(),
-  type: z.enum(TRANSACTION_TYPES).optional(),
-  search: z.string().optional(),
+  from: emptyToUndefined,
+  to: emptyToUndefined,
+  category: emptyToUndefined.pipe(z.enum(CATEGORIES).optional()),
+  type: emptyToUndefined.pipe(z.enum(TRANSACTION_TYPES).optional()),
+  search: emptyToUndefined,
 });
 
 export const transactionRouter = Router();

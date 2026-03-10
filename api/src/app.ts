@@ -13,6 +13,7 @@ import { analyticsRouter } from "./routes/analytics";
 import { budgetRouter } from "./routes/budget";
 import { exportRouter } from "./routes/export";
 import { dashboardRouter } from "./routes/dashboard";
+import { aiRouter } from "./routes/ai";
 import { errorHandler, notFoundHandler } from "./middlewares/error";
 
 export const app = express();
@@ -47,6 +48,7 @@ app.use("/api/dashboard", dashboardRouter);
 app.use("/api/analytics", analyticsRouter);
 app.use("/api/budget", budgetRouter);
 app.use("/api/export", exportRouter);
+app.use("/api/ai", aiRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

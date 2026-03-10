@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
-import { CATEGORIES, CURRENCIES } from "@/lib/constants";
+import { CATEGORIES } from "@/lib/constants";
 import { api } from "@/lib/api";
 
 const schema = z.object({
@@ -14,7 +14,6 @@ const schema = z.object({
   category: z.enum(CATEGORIES),
   date: z.string().min(1),
   notes: z.string().optional(),
-  currency: z.enum(CURRENCIES),
   isRecurring: z.boolean().optional(),
   recurringInterval: z.enum(["daily", "weekly", "monthly", "yearly"]).optional(),
 });
@@ -39,9 +38,6 @@ export function TransactionForm({
     defaultValues: {
       type: "expense",
       category: "Food",
-      currency: (CURRENCIES.includes(preferredCurrency as (typeof CURRENCIES)[number])
-        ? preferredCurrency
-        : "USD") as (typeof CURRENCIES)[number],
       date: new Date().toISOString().slice(0, 10),
       isRecurring: false,
       recurringInterval: "monthly",
@@ -51,7 +47,7 @@ export function TransactionForm({
   const isRecurring = watch("isRecurring");
 
   const onSubmit = async (values: FormValues) => {
-    await api.post("/transactions", values);
+    await api.post("/transactions", { ...values, currency: preferredCurrency || "USD" });
     toast.success("Transaction added");
     reset({
       ...values,
@@ -85,19 +81,10 @@ export function TransactionForm({
         </select>
         <input className="input" type="date" {...register("date")} />
       </div>
-      <div className="grid grid-cols-2 gap-3">
-        <select className="input" {...register("currency")}>
-          {CURRENCIES.map((currency) => (
-            <option key={currency} value={currency}>
-              {currency}
-            </option>
-          ))}
-        </select>
-        <label className="flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-sm dark:border-slate-700">
-          <input type="checkbox" {...register("isRecurring")} />
-          Recurring
-        </label>
-      </div>
+      <label className="flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-sm dark:border-slate-700">
+        <input type="checkbox" {...register("isRecurring")} />
+        Recurring
+      </label>
       {isRecurring && (
         <select className="input" {...register("recurringInterval")}>
           <option value="daily">Daily</option>
