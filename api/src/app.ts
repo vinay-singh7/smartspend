@@ -19,9 +19,11 @@ import { errorHandler, notFoundHandler } from "./middlewares/error";
 export const app = express();
 
 app.use(helmet());
+
+const allowedOrigins = env.CLIENT_ORIGIN.split(",").map((o) => o.trim());
 app.use(
   cors({
-    origin: env.CLIENT_ORIGIN,
+    origin: allowedOrigins.length === 1 ? allowedOrigins[0] : allowedOrigins,
     credentials: true,
   }),
 );
