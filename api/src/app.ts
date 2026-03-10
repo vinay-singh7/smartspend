@@ -20,10 +20,15 @@ export const app = express();
 
 app.use(helmet());
 
-const allowedOrigins = env.CLIENT_ORIGIN.split(",").map((o) => o.trim());
 app.use(
   cors({
-    origin: allowedOrigins.length === 1 ? allowedOrigins[0] : allowedOrigins,
+    origin: function (origin, callback) {
+      if (!origin || origin.includes("localhost") || origin.includes("vercel.app")) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   }),
 );
