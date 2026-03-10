@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { TrendingUp, Repeat2, Trophy } from "lucide-react";
+import { motion } from "framer-motion";
 import { formatCurrency } from "@/lib/format";
 import { Transaction } from "@/lib/types";
 
@@ -39,7 +40,11 @@ export function InsightsCard({ transactions, categoryBreakdown, totalIncome, tot
   const RANK_LABELS = ["🥇", "🥈", "🥉"];
 
   return (
-    <div className="glass-card space-y-4">
+    <motion.div
+      whileHover={{ y: -2 }}
+      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+      className="glass-card space-y-4 transition-shadow hover:shadow-lg hover:shadow-amber-500/5"
+    >
       <h3 className="flex items-center gap-2 text-sm font-semibold">
         <Trophy size={15} className="text-amber-400" />
         Spending Insights
@@ -91,6 +96,6 @@ export function InsightsCard({ transactions, categoryBreakdown, totalIncome, tot
           {formatCurrency(recurringTotal, currency)}
         </span>
       </div>
-    </div>
+    </motion.div>
   );
 }

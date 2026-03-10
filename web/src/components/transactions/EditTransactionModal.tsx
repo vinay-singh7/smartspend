@@ -6,6 +6,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import { X } from "lucide-react";
+import { motion } from "framer-motion";
 import { CATEGORIES } from "@/lib/constants";
 import { api } from "@/lib/api";
 import { Transaction } from "@/lib/types";
@@ -75,13 +76,22 @@ export function EditTransactionModal({ transaction, onClose, onSaved, preferredC
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
-      <div
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
         className="absolute inset-0 bg-black/40 backdrop-blur-sm"
         onClick={onClose}
       />
 
       {/* Modal */}
-      <div className="relative z-10 w-full max-w-md rounded-2xl border border-white/40 bg-white/90 p-5 shadow-2xl backdrop-blur-md dark:border-slate-700 dark:bg-slate-900/90">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95, y: 10 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 10 }}
+        transition={{ type: "spring", stiffness: 400, damping: 30 }}
+        className="relative z-10 w-full max-w-md rounded-2xl border border-white/40 bg-white/90 p-5 shadow-2xl backdrop-blur-md dark:border-slate-700 dark:bg-slate-900/90"
+      >
         {/* Header */}
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-base font-semibold">Edit Transaction</h2>
@@ -150,7 +160,7 @@ export function EditTransactionModal({ transaction, onClose, onSaved, preferredC
             </button>
           </div>
         </form>
-      </div>
+      </motion.div>
     </div>
   );
 }

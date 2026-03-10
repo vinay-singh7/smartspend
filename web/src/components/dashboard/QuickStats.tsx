@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { Flame, CalendarDays } from "lucide-react";
+import { motion } from "framer-motion";
 import { formatCurrency } from "@/lib/format";
 import { Transaction } from "@/lib/types";
 
@@ -44,7 +45,11 @@ export function QuickStats({ transactions, currency = "USD" }: Props) {
   }, [transactions]);
 
   return (
-    <div className="glass-card">
+    <motion.div
+      whileHover={{ y: -2 }}
+      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+      className="glass-card transition-shadow hover:shadow-lg hover:shadow-orange-500/5"
+    >
       <div className="flex flex-wrap items-center gap-6">
         <div className="flex items-center gap-2">
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-orange-100 dark:bg-orange-900/30">
@@ -70,6 +75,6 @@ export function QuickStats({ transactions, currency = "USD" }: Props) {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

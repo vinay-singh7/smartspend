@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import clsx from "clsx";
 import { Moon, Sun } from "lucide-react";
 import toast from "react-hot-toast";
+import { motion } from "framer-motion";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { CURRENCIES } from "@/lib/constants";
@@ -36,18 +37,28 @@ export function TopBar() {
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
         <h1 className="text-lg font-semibold">SmartSpend</h1>
         <nav className="hidden gap-2 md:flex">
-          {links.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={clsx(
-                "btn",
-                pathname === item.href ? "bg-cyan-600 text-white" : "bg-slate-200/80 dark:bg-slate-800",
-              )}
-            >
-              {item.label}
-            </Link>
-          ))}
+          {links.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={clsx(
+                  "btn relative transition-colors",
+                  isActive ? "text-cyan-900 dark:text-cyan-100 font-medium" : "bg-slate-200/50 hover:bg-slate-200/80 text-slate-600 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700",
+                )}
+              >
+                <span className="relative z-10">{item.label}</span>
+                {isActive && (
+                  <motion.div
+                    layoutId="topNavIndicator"
+                    className="absolute inset-0 z-0 rounded-xl bg-cyan-100 dark:bg-cyan-900/40"
+                    transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                  />
+                )}
+              </Link>
+            );
+          })}
         </nav>
         <div className="flex items-center gap-2">
           <select
@@ -64,7 +75,7 @@ export function TopBar() {
           <button
             type="button"
             onClick={toggleTheme}
-            className="btn bg-slate-200/80 dark:bg-slate-800"
+            className="btn bg-slate-200/80 transition-transform hover:scale-105 active:scale-95 dark:bg-slate-800"
             aria-label="Toggle theme"
           >
             {theme === "light" ? <Moon size={16} /> : <Sun size={16} />}
@@ -75,7 +86,7 @@ export function TopBar() {
               logout();
               router.push("/auth");
             }}
-            className="btn bg-rose-500 text-white"
+            className="btn bg-rose-500 text-white transition-transform hover:scale-105 active:scale-95 hover:bg-rose-600"
           >
             Logout
           </button>

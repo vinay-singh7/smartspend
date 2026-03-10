@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { motion } from "framer-motion";
 import { api } from "@/lib/api";
 import { formatCurrency } from "@/lib/format";
 
@@ -55,7 +56,11 @@ export function BudgetCard({ month, currency }: { month: string; currency: strin
   const pct = Math.min(budget?.usedPercent ?? 0, 100);
 
   return (
-    <div className="glass-card space-y-3">
+    <motion.div
+      whileHover={{ y: -2 }}
+      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+      className="glass-card space-y-3 transition-shadow hover:shadow-lg hover:shadow-cyan-500/5"
+    >
       <h3 className="text-sm font-semibold">Monthly Budget</h3>
 
       <div className="flex gap-2">
@@ -120,6 +125,6 @@ export function BudgetCard({ month, currency }: { month: string; currency: strin
           </div>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }

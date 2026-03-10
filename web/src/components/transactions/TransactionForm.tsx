@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
+import { motion } from "framer-motion";
 import { CATEGORIES } from "@/lib/constants";
 import { api } from "@/lib/api";
 
@@ -94,9 +95,15 @@ export function TransactionForm({
         </select>
       )}
       <textarea className="input min-h-20" placeholder="Notes (optional)" {...register("notes")} />
-      <button type="submit" disabled={isSubmitting} className="btn w-full bg-cyan-600 text-white disabled:opacity-60">
+      <motion.button
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        type="submit"
+        disabled={isSubmitting}
+        className="btn w-full bg-cyan-600 text-white disabled:opacity-60"
+      >
         {isSubmitting ? "Saving..." : "Add Transaction"}
-      </button>
+      </motion.button>
     </form>
   );
 }

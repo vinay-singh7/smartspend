@@ -19,6 +19,20 @@ import { QuickStats } from "@/components/dashboard/QuickStats";
 import { AIAssistant } from "@/components/ai/AIAssistant";
 import { Transaction } from "@/lib/types";
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } },
+};
+
+
 type DashboardStats = {
   totalBalance: number;
   totalIncome: number;
@@ -78,21 +92,28 @@ export default function DashboardPage() {
       <TopBar />
       <main className="mx-auto max-w-7xl space-y-4 px-4 py-4 pb-20">
         <motion.section
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
           className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"
         >
-          <StatCard label="Total Balance" amount={stats?.totalBalance || 0} currency={user?.preferredCurrency} accent="cyan" />
-          <StatCard label="Total Income" amount={stats?.totalIncome || 0} currency={user?.preferredCurrency} accent="emerald" />
-          <StatCard label="Total Expense" amount={stats?.totalExpense || 0} currency={user?.preferredCurrency} accent="rose" />
+          <StatCard variants={itemVariants} label="Total Balance" amount={stats?.totalBalance || 0} currency={user?.preferredCurrency} accent="cyan" />
+          <StatCard variants={itemVariants} label="Total Income" amount={stats?.totalIncome || 0} currency={user?.preferredCurrency} accent="emerald" />
+          <StatCard variants={itemVariants} label="Total Expense" amount={stats?.totalExpense || 0} currency={user?.preferredCurrency} accent="rose" />
           <StatCard
+            variants={itemVariants}
             label="Monthly Overview"
             amount={(stats?.monthlyOverview.income || 0) - (stats?.monthlyOverview.expense || 0)}
             currency={user?.preferredCurrency}
           />
         </motion.section>
 
-        <section className="grid gap-4 xl:grid-cols-[1.1fr,1fr]">
+        <motion.section 
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+          className="grid gap-4 xl:grid-cols-[1.1fr,1fr]"
+        >
           <div className="space-y-4">
             <TransactionForm onCreated={fetchDashboard} preferredCurrency={user?.preferredCurrency} />
             <TransactionFilters filters={filters} onChange={setFilters} onApply={fetchDashboard} />
@@ -110,15 +131,19 @@ export default function DashboardPage() {
             <CategoryPieChart data={categoryData} />
             <MonthlyBarChart data={analytics.monthly} />
           </div>
-        </section>
+        </motion.section>
 
-        <QuickStats transactions={transactions} currency={user?.preferredCurrency} />
+        <motion.div variants={itemVariants} initial="hidden" animate="show">
+          <QuickStats transactions={transactions} currency={user?.preferredCurrency} />
+        </motion.div>
 
-        <TransactionTable
-          transactions={transactions}
-          onRefresh={fetchDashboard}
-          preferredCurrency={user?.preferredCurrency}
-        />
+        <motion.div variants={itemVariants} initial="hidden" animate="show">
+          <TransactionTable
+            transactions={transactions}
+            onRefresh={fetchDashboard}
+            preferredCurrency={user?.preferredCurrency}
+          />
+        </motion.div>
       </main>
       <BottomNav />
       <AIAssistant />
